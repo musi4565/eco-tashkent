@@ -15,6 +15,9 @@ export function AuthProvider({ children }) {
 
   const login = useCallback(async (phone, password) => {
     const { data } = await api.post('/auth/login', { phone, password });
+    if (!data || !data.token) {
+      throw new Error('Serverdan noto\'g\'ri javob keldi');
+    }
     localStorage.setItem('token', data.token);
     localStorage.setItem('user', JSON.stringify(data.user));
     setUser(data.user);
@@ -24,6 +27,9 @@ export function AuthProvider({ children }) {
 
   const register = useCallback(async (name, phone, password) => {
     const { data } = await api.post('/auth/register', { name, phone, password });
+    if (!data || !data.token) {
+      throw new Error('Serverdan noto\'g\'ri javob keldi');
+    }
     localStorage.setItem('token', data.token);
     localStorage.setItem('user', JSON.stringify(data.user));
     setUser(data.user);

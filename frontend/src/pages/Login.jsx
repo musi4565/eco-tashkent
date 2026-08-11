@@ -29,6 +29,10 @@ export default function Login() {
         <h1 className="text-2xl font-bold text-gray-900">Tizimga kirish</h1>
         <p className="mt-1 text-sm text-gray-500">Eko-jamiyatga xush kelibsiz! 🌿</p>
 
+        <div className="mt-4 rounded-xl border border-eco-200 bg-eco-50 p-3 text-xs text-eco-800">
+          <b>Demo akkaunt:</b> <span className="font-mono">+998900000001</span> / <span className="font-mono">demo123</span>
+        </div>
+
         <form onSubmit={submit} className="mt-6 space-y-4">
           <div>
             <label className="mb-1.5 block text-sm font-semibold text-gray-700">Telefon raqami</label>
