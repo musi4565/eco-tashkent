@@ -22,12 +22,14 @@ services:
     rootDir: frontend
     buildCommand: npm install && npm run build
     staticPublishPath: dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
     envVars:
       - key: VITE_API_URL
-        fromService:
-          name: eco-tashkent-api
-          type: web
-          property: url
+        sync: false
+        comment: "API ning public URL (masalan https://eco-tashkent-api.onrender.com) — deploy'dan keyin dashboard'da to'ldiring va rebuild qiling"
 
   - type: web
     name: eco-tashkent-bot
@@ -43,12 +45,10 @@ services:
         fromService:
           name: eco-tashkent-api
           type: web
-          property: url
+          property: hostport
       - key: WEB_URL
-        fromService:
-          name: eco-tashkent-web
-          type: web
-          property: url
+        sync: false
+        comment: "Web sayt public URL (masalan https://eco-tashkent-web.onrender.com) — deploy'dan keyin dashboard'da to'ldiring"
 
 databases:
   - name: eco-tashkent-db

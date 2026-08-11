@@ -158,12 +158,26 @@ Parol:   demo123
 
 ## 🚀 Deploy (bepul hosting)
 
-### Vazifa 1: PostgreSQL + Backend — Railway yoki Render
-**Render (blueprint):** `render.yaml` fayli repo ildizida — `eco-tashkent-api` (Docker), `eco-tashkent-web` (static) va bepul `eco-tashkent-db` (PostgreSQL) avtomatik yaratiladi.
+### Vazifa 1: PostgreSQL + Backend + Frontend + Bot — Render blueprint (bitta repo)
 
-**Railway:** `backend/` papkasini yangi loyiha sifatida ulang → Railway DATABASE_URL ni avtomatik sozlaydi. `.env` o'rniga platformaning **Environment Variables** bo'limiga yozing.
+`render.yaml` fayli repo ildizida — [Render](https://render.com) saytida **New → Blueprint** bosib `eco-tashkent` repo'ni ulasangiz, quyidagilar avtomatik yaratiladi:
+- `eco-tashkent-db` — PostgreSQL (bepul)
+- `eco-tashkent-api` — backend (Docker, `npx prisma migrate deploy && seed && node src/index.js`)
+- `eco-tashkent-web` — frontend (static, SPA rewrite o'rnatilgan)
+- `eco-tashkent-bot` — Telegram bot (API ga Render ichki tarmog'i orqali ulanadi)
 
-### Vazifa 2: Frontend — Vercel yoki Netlify
+Blueprint yaratishda `sync: false` bo'lgan o'zgaruvchilar so'raladi:
+| O'zgaruvchi | Qaysi servisda | Qiymati |
+|-------------|----------------|---------|
+| `VITE_API_URL` | eco-tashkent-web | API public URL: `https://eco-tashkent-api.onrender.com` |
+| `TELEGRAM_BOT_TOKEN` | eco-tashkent-bot | @BotFather dan olingan token |
+| `WEB_URL` | eco-tashkent-bot | Web public URL: `https://eco-tashkent-web.onrender.com` |
+
+> 💡 Agar blueprint'da qiymatni kiritmagan bo'lsangiz, deploy tugagach **Dashboard → Servis → Environment** bo'limida to'ldiring va servisni rebuild qiling.
+
+> ⚠️ Render'da `fromService.property` faqat `host`, `port`, `hostport`, `connectionString`, `envVarKey` qiymatlarini qabul qiladi — `url` yo'q! Botning API_URL'i `hostport` (ichki tarmoq) bilan ulangan.
+
+### Vazifa 2 (muqobil): Frontend — Vercel yoki Netlify
 ```bash
 # Vercel (frontend/ papkasi)
 cd frontend && npx vercel
