@@ -178,7 +178,12 @@ async function searchByCategory(chatId, category) {
 }
 
 async function updateSubscriptions(chatId, action, category) {
-  const subs = (await api.getSubscribers()).find((s) => s.chatId === String(chatId));
+  let subs;
+  try {
+    subs = (await api.getSubscribers()).find((s) => s.chatId === String(chatId));
+  } catch {
+    subs = null;
+  }
   let cats = subs?.subscribedCategories || [];
   if (action === 'sub' && !cats.includes(category)) cats.push(category);
   if (action === 'unsub') cats = cats.filter((c) => c !== category);
@@ -222,8 +227,13 @@ bot.on('callback_query', async (query) => {
     const action = data.startsWith('sub_') ? 'sub' : 'unsub';
     const cat = data.split('_')[1];
     if (cat === 'done') {
-      const subs = (await api.getSubscribers()).find((s) => s.chatId === String(chatId));
-      const list = subs?.subscribedCategories || [];
+      let found;
+      try {
+        found = (await api.getSubscribers()).find((s) => s.chatId === String(chatId));
+      } catch {
+        found = undefined;
+      }
+      const list = found?.subscribedCategories || [];
       await bot.sendMessage(
         chatId,
         list.length

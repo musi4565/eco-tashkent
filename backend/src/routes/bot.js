@@ -100,9 +100,10 @@ router.patch('/subscribers/:chatId', async (req, res) => {
   try {
     const chatId = BigInt(req.params.chatId);
     const { categories } = req.body;
-    const tgUser = await prisma.telegramUser.update({
+    const tgUser = await prisma.telegramUser.upsert({
       where: { chatId },
-      data: { subscribedCategories: Array.isArray(categories) ? categories : [] },
+      update: { subscribedCategories: Array.isArray(categories) ? categories : [] },
+      create: { chatId, subscribedCategories: Array.isArray(categories) ? categories : [] },
     });
     res.json({ ok: true, subscribedCategories: tgUser.subscribedCategories });
   } catch (err) {
