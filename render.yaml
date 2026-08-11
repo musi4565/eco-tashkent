@@ -29,6 +29,27 @@ services:
           type: web
           property: url
 
+  - type: web
+    name: eco-tashkent-bot
+    runtime: node
+    plan: free
+    rootDir: bot
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: API_URL
+        fromService:
+          name: eco-tashkent-api
+          type: web
+          property: url
+      - key: WEB_URL
+        fromService:
+          name: eco-tashkent-web
+          type: web
+          property: url
+
 databases:
   - name: eco-tashkent-db
     plan: free
