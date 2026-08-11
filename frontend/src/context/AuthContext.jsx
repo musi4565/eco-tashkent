@@ -34,8 +34,10 @@ export function AuthProvider({ children }) {
   const refreshUser = useCallback(async () => {
     try {
       const { data } = await api.get('/auth/me');
-      localStorage.setItem('user', JSON.stringify(data.user));
-      setUser(data.user);
+      if (data && data.user && typeof data.user === 'object') {
+        localStorage.setItem('user', JSON.stringify(data.user));
+        setUser(data.user);
+      }
     } catch {
       /* token eskirgan bo'lsa indamay o'tib ketamiz */
     }

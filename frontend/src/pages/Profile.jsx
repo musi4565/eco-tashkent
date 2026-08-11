@@ -54,7 +54,7 @@ export default function Profile() {
     await api.patch(`/items/${item.id}`, { status: 'done' });
     refreshUser();
     const { data } = await api.get('/items/mine');
-    setMyItems(data);
+    setMyItems(Array.isArray(data) ? data : []);
   };
 
   const requestCard = (r, type) => (
