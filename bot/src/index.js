@@ -7,13 +7,23 @@ import * as api from './api.js';
 import { CATEGORIES, TYPE_LABELS, categoryLabel } from './categories.js';
 
 const TOKEN = process.env.TELEGRAM_BOT_TOKEN;
-const WEB_URL = process.env.WEB_URL || 'http://localhost:5173';
+const WEB_URL = process.env.WEB_URL || 'https://eco-tashkent-web.onrender.com';
 
 const HEALTH_PORT = Number(process.env.PORT) || 10000;
 http
-  .createServer((_req, res) => {
+  .createServer(async (_req, res) => {
     res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ status: 'ok', service: 'eco-tashkent-bot' }));
+    res.end(
+      JSON.stringify({
+        status: 'ok',
+        service: 'eco-tashkent-bot',
+        hasToken: !!TOKEN,
+        apiUrl: api.API_URL,
+        webUrl: WEB_URL,
+        webTokenSet: !!process.env.WEB_URL,
+        apiTokenSet: !!process.env.API_URL,
+      })
+    );
   })
   .listen(HEALTH_PORT, () => {
     console.log(`🩺 Bot health server port ${HEALTH_PORT} da ishlamoqda`);
@@ -25,6 +35,7 @@ if (!TOKEN) {
 }
 
 const bot = new TelegramBot(TOKEN, { polling: true });
+bot.getMe().then((me) => console.log(`🤖 Telegram: @${me.username} (#${me.id})`)).catch(() => {});
 
 const MAIN_KB = {
   reply_markup: {
