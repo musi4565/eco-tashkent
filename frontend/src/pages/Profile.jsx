@@ -18,8 +18,10 @@ export default function Profile() {
 
   useEffect(() => {
     if (!user) return;
-    api.get('/items/mine').then(({ data }) => setMyItems(data)).catch(() => {});
-    api.get('/requests').then(({ data }) => setRequests(data)).catch(() => {});
+    api.get('/items/mine').then(({ data }) => setMyItems(Array.isArray(data) ? data : [])).catch(() => setMyItems([]));
+    api.get('/requests')
+      .then(({ data }) => setRequests({ sent: Array.isArray(data?.sent) ? data.sent : [], received: Array.isArray(data?.received) ? data.received : [] }))
+      .catch(() => setRequests({ sent: [], received: [] }));
   }, [user]);
 
   if (!user) return <Navigate to="/login" replace />;

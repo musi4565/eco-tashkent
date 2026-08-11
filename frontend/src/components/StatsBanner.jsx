@@ -5,7 +5,9 @@ export default function StatsBanner() {
   const [stats, setStats] = useState({ itemsSaved: 0, activeUsers: 0, totalEcoPoints: 0 });
 
   useEffect(() => {
-    api.get('/stats').then(({ data }) => setStats(data)).catch(() => {});
+    api.get('/stats')
+      .then(({ data }) => setStats(data && typeof data === 'object' && !Array.isArray(data) ? data : {}))
+      .catch(() => setStats({}));
   }, []);
 
   const items = [

@@ -7,7 +7,7 @@ export default function Leaderboard() {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    api.get('/stats/leaderboard').then(({ data }) => setUsers(data)).catch(() => {});
+    api.get('/stats/leaderboard').then(({ data }) => setUsers(Array.isArray(data) ? data : [])).catch(() => setUsers([]));
   }, []);
 
   return (

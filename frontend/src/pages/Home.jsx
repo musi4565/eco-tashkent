@@ -16,8 +16,8 @@ export default function Home() {
 
   useEffect(() => {
     api.get('/items', { params: { status: 'active' } })
-      .then(({ data }) => setRecent(data.slice(0, 8)))
-      .catch(() => {});
+      .then(({ data }) => setRecent(Array.isArray(data) ? data.slice(0, 8) : []))
+      .catch(() => setRecent([]));
   }, []);
 
   return (

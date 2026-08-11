@@ -35,7 +35,7 @@ export default function Catalog() {
       if (search.trim()) q.search = search.trim();
       q.status = 'active';
       const { data } = await api.get('/items', { params: q });
-      setItems(data);
+      setItems(Array.isArray(data) ? data : []);
     } catch {
       setItems([]);
     } finally {

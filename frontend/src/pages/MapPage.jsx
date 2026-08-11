@@ -38,7 +38,7 @@ export default function MapPage() {
   }, []);
 
   useEffect(() => {
-    api.get('/map/points').then(({ data }) => setPoints(data)).catch(() => {});
+    api.get('/map/points').then(({ data }) => setPoints(Array.isArray(data) ? data : [])).catch(() => setPoints([]));
   }, []);
 
   useEffect(() => {

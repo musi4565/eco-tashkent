@@ -18,7 +18,12 @@ export default function ItemDetail() {
   const [success, setSuccess] = useState('');
 
   useEffect(() => {
-    api.get(`/items/${id}`).then(({ data }) => setItem(data)).catch(() => setNotFound(true));
+    api.get(`/items/${id}`)
+      .then(({ data }) => {
+        if (data && typeof data === 'object' && data.id) setItem(data);
+        else setNotFound(true);
+      })
+      .catch(() => setNotFound(true));
   }, [id]);
 
   if (notFound) {

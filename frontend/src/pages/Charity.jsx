@@ -8,8 +8,8 @@ export default function Charity() {
 
   useEffect(() => {
     api.get('/items', { params: { type: 'charity', status: 'active' } })
-      .then(({ data }) => setItems(data))
-      .catch(() => {})
+      .then(({ data }) => setItems(Array.isArray(data) ? data : []))
+      .catch(() => setItems([]))
       .finally(() => setLoading(false));
   }, []);
 
