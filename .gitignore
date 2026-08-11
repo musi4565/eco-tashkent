@@ -1,0 +1,20 @@
+# Node
+node_modules/
+dist/
+
+# Secrets — .env hech qachon GitHub'ga kirmaydi
+.env
+.env.local
+.env.*.local
+
+# Yuklangan fayllar
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# Loglar va OS fayllar
+*.log
+.DS_Store
+Thumbs.db
+
+# Prisma
+backend/prisma/*.db

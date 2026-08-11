@@ -1,0 +1,111 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement()) @map("id")
+  name      String   @map("name")
+  phone     String   @unique @map("phone")
+  password  String   @map("password")
+  ecoPoints Int      @default(0) @map("eco_points")
+  savedKg   Float    @default(0) @map("saved_kg")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  items         Item[]
+  sentRequests  Request[]     @relation("Requester")
+  ecoPointLogs  EcoPoint[]
+  telegramLinks TelegramUser[]
+  messages      ChatMessage[]
+
+  @@map("users")
+}
+
+model Item {
+  id          Int      @id @default(autoincrement()) @map("id")
+  title       String   @map("title")
+  description String   @default("") @map("description")
+  category    String   @map("category")
+  condition   String   @map("condition")
+  type        String   @map("type")
+  imageUrl    String?  @map("image_url")
+  district    String   @map("district")
+  address     String?  @map("address")
+  status      String   @default("active") @map("status")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  ownerId  Int       @map("owner_id")
+  owner    User      @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  requests Request[]
+
+  @@map("items")
+}
+
+model RecyclePoint {
+  id                Int      @id @default(autoincrement()) @map("id")
+  name              String   @map("name")
+  type              String   @map("type")
+  lat               Float    @map("lat")
+  lng               Float    @map("lng")
+  address           String   @map("address")
+  acceptedMaterials String[] @map("accepted_materials")
+
+  @@map("recycle_points")
+}
+
+model Request {
+  id          Int      @id @default(autoincrement()) @map("id")
+  status      String   @default("pending") @map("status")
+  message     String   @default("") @map("message")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  itemId      Int       @map("item_id")
+  item        Item      @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  requesterId Int       @map("requester_id")
+  requester   User      @relation("Requester", fields: [requesterId], references: [id], onDelete: Cascade)
+  messages    ChatMessage[]
+
+  @@map("requests")
+}
+
+model ChatMessage {
+  id        Int      @id @default(autoincrement()) @map("id")
+  text      String   @map("text")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  requestId Int     @map("request_id")
+  request   Request @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  senderId  Int     @map("sender_id")
+  sender    User    @relation(fields: [senderId], references: [id], onDelete: Cascade)
+
+  @@map("chat_messages")
+}
+
+model EcoPoint {
+  id        Int      @id @default(autoincrement()) @map("id")
+  amount    Int      @map("amount")
+  reason    String   @map("reason")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  userId Int  @map("user_id")
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("eco_points")
+}
+
+model TelegramUser {
+  id                   Int      @id @default(autoincrement()) @map("id")
+  chatId               BigInt   @unique @map("chat_id")
+  username             String?  @map("username")
+  subscribedCategories String[] @default([]) @map("subscribed_categories")
+  createdAt            DateTime @default(now()) @map("created_at")
+
+  userId Int?  @map("user_id")
+  user   User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@map("telegram_users")
+}
