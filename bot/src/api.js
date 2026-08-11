@@ -1,8 +1,19 @@
 import axios from 'axios';
 
-export const API_URL = process.env.API_URL || 'http://localhost:5000';
+let rawUrl = process.env.API_URL || 'http://localhost:5000';
+if (!/^https?:\/\//i.test(rawUrl)) rawUrl = 'http://' + rawUrl;
 
-const api = axios.create({ baseURL: API_URL, timeout: 10000 });
+export const API_URL = rawUrl.replace(/\/+$/, '');
+export const API_BASE = `${API_URL}/api`;
+
+const api = axios.create({ baseURL: API_BASE, timeout: 15000 });
+
+export function describeError(err) {
+  if (err.response) {
+    return `HTTP ${err.response.status} | URL: ${err.config?.baseURL || ''}${err.config?.url || ''} | Javob: ${JSON.stringify(err.response.data) || ''}`;
+  }
+  return `${err.message} | URL: ${err.config?.baseURL || ''}${err.config?.url || ''}`;
+}
 
 export async function getItems(params) {
   const { data } = await api.get('/items', { params });

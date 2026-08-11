@@ -1,12 +1,23 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
+import http from 'http';
 import TelegramBot from 'node-telegram-bot-api';
 import * as api from './api.js';
 import { CATEGORIES, TYPE_LABELS, categoryLabel } from './categories.js';
 
 const TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const WEB_URL = process.env.WEB_URL || 'http://localhost:5173';
+
+const HEALTH_PORT = Number(process.env.PORT) || 10000;
+http
+  .createServer((_req, res) => {
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ status: 'ok', service: 'eco-tashkent-bot' }));
+  })
+  .listen(HEALTH_PORT, () => {
+    console.log(`🩺 Bot health server port ${HEALTH_PORT} da ishlamoqda`);
+  });
 
 if (!TOKEN) {
   console.warn('⚠️ TELEGRAM_BOT_TOKEN berilmagan — bot ishga tushmaydi. @BotFather dan token oling.');
@@ -251,7 +262,7 @@ async function pollNewItems() {
       }
       if (items.length > 0) lastCheck = new Date(items[items.length - 1].createdAt);
     } catch (err) {
-      console.error('Poller (e\'lonlar) xatosi:', err.message);
+      console.error('Poller (e\'lonlar) xatosi:', api.describeError(err));
     }
   }, 30000);
 }
@@ -277,7 +288,7 @@ async function pollNewRequests() {
       }
       if (requests.length > 0) lastCheck = new Date(requests[requests.length - 1].createdAt);
     } catch (err) {
-      console.error('Poller (so\'rovlar) xatosi:', err.message);
+      console.error('Poller (so\'rovlar) xatosi:', api.describeError(err));
     }
   }, 30000);
 }
@@ -286,5 +297,7 @@ bot.on('polling_error', (err) => console.error('Polling xatosi:', err.message));
 bot.on('error', (err) => console.error('Bot xatosi:', err.message));
 
 console.log('🤖 Eco Tashkent bot ishga tushdi (long polling)');
+console.log(`🔗 API_URL: ${api.API_URL}`);
+console.log(`🌐 WEB_URL: ${WEB_URL}`);
 pollNewItems();
 pollNewRequests();

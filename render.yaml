@@ -30,7 +30,7 @@ services:
         sync: false
         comment: "API ning public URL (masalan https://eco-tashkent-api.onrender.com) — deploy'dan keyin dashboard'da to'ldiring va rebuild qiling"
 
-  - type: web
+  - type: worker
     name: eco-tashkent-bot
     runtime: node
     plan: free
